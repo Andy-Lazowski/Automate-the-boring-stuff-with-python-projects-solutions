@@ -1,0 +1,87 @@
+ #### SANDWICH MAKER
+# to do this you need to install pyinputplus
+
+import pyinputplus as pyip
+import re
+
+
+#   BREAD    wheat, white, sourdough
+
+prompt_bread = 'Hi for your sandwich you can choose the following types of bread.'
+print(prompt_bread)
+bread = pyip.inputMenu(['wheat', 'white', 'sourdough'],  lettered=True, numbered=False)
+print(f'You\'ve chosen {bread} bread')
+
+#   PROTEIN     chicken, turkey, ham, tofu
+
+print('What kind of sandwich would you like?')
+protein = pyip.inputMenu(['chicken', 'turkey', 'ham', 'tofu'], lettered=True, numbered=False)
+print('Ok. {} {} sandwich'.format(bread, protein))
+
+#   CHEESE      yes/no
+
+print('Would you like some cheese(Yes/No)?')
+addCheese = pyip.inputYesNo()
+
+#   TYPE OF CHEESE      chedar, Swiss, mozarella
+
+if addCheese == 'yes':
+    print('What type of cheese would you like?')
+    cheese_selection = pyip.inputMenu(['cheddar', 'Swiss','mozzarella'], lettered=True, numbered=False)
+    cheese_selection_string = ('with '+cheese_selection +' cheese')
+else:
+    cheese_selection_string = 'without cheese'
+
+print(f'{bread} {protein} sandwich {cheese_selection_string}')
+
+
+#   MAYO yes/no MUSTARD yes/no LETTUCE yes/no TOMATO yes/no
+
+list_of_condiments =['mayo','mustard','lettuce','tomato']
+condiments_chosen = []
+for condiment in range(0, len(list_of_condiments)):
+    print(f'Would you like to add {list_of_condiments[condiment]}(Yes/No) ?')
+    condiment_choice = pyip.inputYesNo()
+    if condiment_choice =='yes':
+        condiments_chosen.append(list_of_condiments[condiment])
+
+if len(condiments_chosen)>0:
+    condiments_chosen.insert(-1, 'and')       #this adds 'and' before the last condiment
+condiments_chosen_string = ', '.join(condiments_chosen)      # the following will tidy up the string for the final message
+if len(condiments_chosen)>0:
+    condiments_chosen_string= ', ' +  condiments_chosen_string
+
+andRegex = re.compile(r',\s*and,')        # this will tidy up the string in case of (', and' or 'and, ' )
+condiments_chosen_string = andRegex.sub(' and', condiments_chosen_string)
+
+print(f'You have chosen {bread} {protein} sandwich {cheese_selection_string} {condiments_chosen_string}.')
+
+#   HOW MANY SANDWICHES
+
+number_of_sandwiches = pyip.inputInt(prompt='How many of those would you like?\n',min=1)
+print(f'Ok {number_of_sandwiches}, no problem')
+
+#   SET PRICES
+
+prices ={'wheat': 1,'white': 1,'sourdough':1,'chicken':2,'turkey':2,'ham':2,'tofu':2,
+'cheddar': 3,'Swiss': 3,'mozzarella': 3,
+'mayo': 4,'mustard': 4,'lettuce': 4,'tomato': 4}
+
+#   ALL PRODUCTS USED
+
+products_used = []
+products_used.append(bread)
+products_used.append(protein)
+if addCheese == 'yes':
+    products_used.append(cheese_selection)
+products_used += condiments_chosen
+if 'and' in products_used:    # removes 'and' from the list(products_used)
+    products_used.remove('and')
+
+#   ADD UP ALL THE PRICES
+
+cost = 0
+for product in products_used:
+    cost += prices[product]
+
+print('That will be: '+ str(cost * number_of_sandwiches)+ '£.')
